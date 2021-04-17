@@ -37,10 +37,21 @@ cilium-install:
 	   --set image.pullPolicy=IfNotPresent \
 	   --set ipam.mode=kubernetes
 
+.PHONY: linkerd-install
+linkerd-install:
+	linkerd check --pre && linkerd install | kubectl apply --wait=true -f -
+	linkerd check
+
 .PHONY: k8s-apply
 k8s-apply:
 	kubectl get ns cilium-linkerd 1>/dev/null 2>/dev/null || kubectl create ns cilium-linkerd
 	kubectl apply -k k8s/podinfo -n cilium-linkerd
 	kubectl apply -f k8s/client
 	kubectl apply -f k8s/networkpolicy
+
+.PHONY: check-status
+check-status:
+	linkerd top deployment/podinfo --namespace cilium-linkerd
+	linkerd tap deployment/client --namespace cilium-linkerd
+	kubectl exec deploy/client -n cilium-linkerd -- curl -s podinfo:9898
 
