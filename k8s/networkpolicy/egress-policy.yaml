@@ -1,0 +1,28 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: "egress-policy"
+  namespace: cilium-linkerd
+specs:
+  - endpointSelector:
+      matchLabels:
+        app: client
+    egress:
+      - toEndpoints:
+          - matchLabels:
+              "app": podinfo
+  - endpointSelector:
+      matchLabels:
+        app: client
+    egress:
+      - toEndpoints:
+          - matchLabels:
+              "k8s:io.kubernetes.pod.namespace": kube-system
+              "k8s:k8s-app": kube-dns
+  - endpointSelector:
+      matchLabels:
+        app: client
+    egress:
+      - toEndpoints:
+          - matchLabels:
+              "k8s:io.kubernetes.pod.namespace": "linkerd"

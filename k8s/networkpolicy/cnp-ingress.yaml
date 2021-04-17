@@ -1,0 +1,24 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: "ingress-policy"
+  namespace: cilium-linkerd
+specs:
+  - endpointSelector:
+      matchLabels:
+        app: podinfo
+    ingress:
+      - fromEndpoints:
+          - matchLabels:
+              app: client
+        toPorts:
+          - ports:
+              - port: "9898"
+                protocol: TCP
+  - endpointSelector:
+      matchLabels:
+        app: podinfo
+    ingress:
+      - fromEndpoints:
+          - matchLabels:
+              "k8s:io.kubernetes.pod.namespace": linkerd

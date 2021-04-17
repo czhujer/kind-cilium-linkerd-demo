@@ -12,6 +12,10 @@ kind-create:
 kind-delete:
 	kind delete cluster
 
+.PHONY: kx-kind
+kx-kind:
+	kind export kubeconfig
+
 .PHONY: cilium-install
 cilium-install:
 	# pull image locally
@@ -32,3 +36,11 @@ cilium-install:
 	   --set bpf.masquerade=false \
 	   --set image.pullPolicy=IfNotPresent \
 	   --set ipam.mode=kubernetes
+
+.PHONY: k8s-apply
+k8s-apply:
+	kubectl get ns cilium-linkerd 1>/dev/null 2>/dev/null || kubectl create ns cilium-linkerd
+	kubectl apply -k k8s/podinfo -n cilium-linkerd
+	kubectl apply -f k8s/client
+	kubectl apply -f k8s/networkpolicy
+

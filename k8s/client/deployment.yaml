@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client
+  namespace: cilium-linkerd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: client
+  template:
+    metadata:
+      labels:
+        app: client
+    spec:
+      containers:
+        - name: client
+          image: buoyantio/slow_cooker:1.3.0
+          command:
+            - "/bin/sh"
+          args:
+            - "-c"
+            - |
+              sleep 5 # wait for pods to start
+              cat <<EOT >> url_list
+              http://podinfo:9898/env
+              http://podinfo:9898/version
+              http://podinfo:9898/env
+              http://podinfo:9898/metrics
+              http://podinfo:9898/healthz
+              http://podinfo:9898/readyz
+              http://podinfo:9898/headers
+              EOT
+              /slow_cooker/slow_cooker @url_list
+          ports:
+            - containerPort: 9999
