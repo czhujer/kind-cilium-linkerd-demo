@@ -41,6 +41,8 @@ cilium-install:
 linkerd-install:
 	linkerd check --pre && linkerd install | kubectl apply --wait=true -f -
 	linkerd check
+	linkerd viz install | kubectl apply -f - # on-cluster metrics stack
+	linkerd check
 
 .PHONY: k8s-apply
 k8s-apply:
@@ -55,3 +57,8 @@ check-status:
 	linkerd tap deployment/client --namespace cilium-linkerd
 	kubectl exec deploy/client -n cilium-linkerd -- curl -s podinfo:9898
 
+.PHONY: ambassador-install
+ambassador-install:
+	helm repo add datawire https://www.getambassador.io
+	helm install ambassador --namespace ambassador datawire/ambassador \
+		--create-namespace
