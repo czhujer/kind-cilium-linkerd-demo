@@ -12,6 +12,14 @@ CERT_EXPIRY := $(shell sh -c "date -v +3y -j '+%Y-%m-%dT%H:%M:%SZ'")
 kind-create:
 	kind --version
 	kind create cluster --name $(CLUSTER_NAME) --config="kind/kind-config.yaml"
+	# for testing PSP
+	#	kubectl apply -f https://github.com/appscodelabs/tasty-kube/raw/master/psp/privileged-psp.yaml
+	#	kubectl apply -f https://github.com/appscodelabs/tasty-kube/raw/master/psp/baseline-psp.yaml
+	#	kubectl apply -f https://github.com/appscodelabs/tasty-kube/raw/master/psp/restricted-psp.yaml
+	#	kubectl apply -f https://github.com/appscodelabs/tasty-kube/raw/master/kind/psp/cluster-roles.yaml
+	#	kubectl apply -f https://github.com/appscodelabs/tasty-kube/raw/master/kind/psp/role-bindings.yaml
+	# for more control planes, but no workers
+	# kubectl taint nodes --all node-role.kubernetes.io/master- || true
 
 .PHONY: kind-delete
 kind-delete:

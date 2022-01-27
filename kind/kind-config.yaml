@@ -15,6 +15,17 @@ networking:
 #        path: /apiServer/certSANs/-
 #        value: 172.17.0.1
 
+# patch the generated kubeadm config with some extra settings
+#kubeadmConfigPatches:
+#  - |
+#    apiVersion: kubeadm.k8s.io/v1beta2
+#    kind: ClusterConfiguration
+#    metadata:
+#      name: config
+#    apiServer:
+#      extraArgs:
+#        enable-admission-plugins: NodeRestriction,PodSecurityPolicy
+
 # image list
     # image: kindest/node:v1.20.2@sha256:15d3b5c4f521a84896ed1ead1b14e4774d02202d5c65ab68f30eeaf310a3b1a7
     # image: kindest/node:v1.21.2@sha256:9d07ff05e4afefbba983fac311807b3c17a5f36e7061f6cb7e2ba756255b2be4
