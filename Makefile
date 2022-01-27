@@ -1,6 +1,7 @@
 # Set environment variables
 export CLUSTER_NAME?=kind-cilium-linkerd
-export CILIUM_VERSION?=1.10.6
+#export CILIUM_VERSION?=1.10.6
+export CILIUM_VERSION?=1.11.1
 export LINKERD_VERSION?=2.11.1
 # for MacOS
 CERT_EXPIRY := $(shell sh -c "date -v +3y -j '+%Y-%m-%dT%H:%M:%SZ'")
@@ -32,8 +33,10 @@ cilium-install:
 	helm repo add cilium https://helm.cilium.io/
 	# install/upgrade the chart
 	helm upgrade --install cilium cilium/cilium --version $(CILIUM_VERSION) \
+	   -f kind/kind-values-cilium-hubble.yaml \
    	   --wait \
 	   --namespace kube-system \
+	   --set operator.replicas=1 \
 	   --set nodeinit.enabled=true \
 	   --set kubeProxyReplacement=partial \
 	   --set hostServices.enabled=false \
@@ -73,6 +76,9 @@ linkerd-install-simple:
 	linkerd check
 	linkerd viz install | kubectl apply -f - # on-cluster metrics stack
 	linkerd check
+
+# TODO: fix namespace
+# https://github.com/linkerd/linkerd2/pull/3413
 
 # https://github.com/BuoyantIO/service-mesh-academy/blob/main/linkerd-in-production/create.sh#L78
 .PHONY: linkerd-install-ha
